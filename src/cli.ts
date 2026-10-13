@@ -152,6 +152,27 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
+  // Parse the input before --dry-run returns, so a dry run validates it too.
+  const argsInline = flagStr(flags, "args");
+  const argsFile = flagStr(flags, "args-file");
+  if (argsInline !== undefined && argsFile !== undefined) {
+    throw new Error("use either --args or --args-file, not both");
+  }
+  // A file saved by Windows tools may start with a UTF-8 BOM, which JSON.parse rejects.
+  const argsRaw =
+    argsFile !== undefined
+      ? (await readFile(path.resolve(cwd, argsFile), "utf8")).replace(/^\uFEFF/, "")
+      : argsInline;
+  let scriptArgs: unknown;
+  if (argsRaw !== undefined) {
+    try {
+      scriptArgs = JSON.parse(argsRaw);
+    } catch (e) {
+      const where = argsFile !== undefined ? `--args-file ${argsFile}` : "--args";
+      throw new Error(`${where} is not valid JSON: ${String(e instanceof Error ? e.message : e)}`);
+    }
+  }
+
   if (flags["dry-run"] === true) {
     const meta = extractMeta(source);
     const phases = (meta.phases ?? []).map((p) => p.title).join(" → ") || "(none declared)";
@@ -160,6 +181,7 @@ async function main(): Promise<void> {
         `  phases:    ${phases}\n` +
         `  executors: ${Object.keys(executors).join(", ")}\n` +
         `  config:    ${configPath ?? "(none)"}\n` +
+        `  args:      ${argsRaw !== undefined ? "valid JSON" : "(none)"}\n` +
         "  preflight ok — no agents were run\n",
     );
     process.exit(0);
@@ -168,22 +190,7 @@ async function main(): Promise<void> {
   const opts: RunOptions = { executors, cwd };
   if (scriptPath !== undefined) opts.scriptPath = scriptPath;
   if (name !== undefined) opts.name = name;
-
-  const argsInline = flagStr(flags, "args");
-  const argsFile = flagStr(flags, "args-file");
-  if (argsInline !== undefined && argsFile !== undefined) {
-    throw new Error("use either --args or --args-file, not both");
-  }
-  const argsRaw =
-    argsFile !== undefined ? await readFile(path.resolve(cwd, argsFile), "utf8") : argsInline;
-  if (argsRaw !== undefined) {
-    try {
-      opts.args = JSON.parse(argsRaw);
-    } catch (e) {
-      const source = argsFile !== undefined ? `--args-file ${argsFile}` : "--args";
-      throw new Error(`${source} is not valid JSON: ${String(e instanceof Error ? e.message : e)}`);
-    }
-  }
+  if (argsRaw !== undefined) opts.args = scriptArgs;
 
   const resume = flagStr(flags, "resume");
   if (resume !== undefined) opts.resumeFromRunId = resume;

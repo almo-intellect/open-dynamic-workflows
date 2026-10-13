@@ -73,7 +73,7 @@ function oneLine(s: string, max = 300): string {
 export function extractJsonObject(
   text: string,
 ): { ok: true; value: unknown } | { ok: false; error: string } {
-  const t = text.replace(/^﻿/, "").trim();
+  const t = text.replace(/^\uFEFF/, "").trim();
   if (t.length === 0) return { ok: false, error: "empty response" };
   const candidates: string[] = [t];
   const fenced = /```(?:json)?[ \t]*\r?\n([\s\S]*?)\r?\n?```/i.exec(t)?.[1];
