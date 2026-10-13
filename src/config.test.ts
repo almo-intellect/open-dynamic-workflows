@@ -53,6 +53,13 @@ test("validation: unknown keys, bad types, unknown executors, escaping snapshot 
   assert.deepEqual(validateConfig({ _comment: "fine", $schema: "x" }, "c.json"), {});
 });
 
+test("a UTF-8 BOM (Windows editors, PowerShell 5.1) does not break the config", () => {
+  const dir = project();
+  mkdirSync(path.join(dir, ".odw"), { recursive: true });
+  writeFileSync(path.join(dir, ".odw", "config.json"), `\uFEFF${JSON.stringify({ executors: ["gemini"] })}`);
+  assert.deepEqual(loadConfig(dir).config, { executors: ["gemini"] });
+});
+
 test("invalid JSON names the file", () => {
   const dir = project();
   mkdirSync(path.join(dir, ".odw"), { recursive: true });

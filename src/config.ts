@@ -168,7 +168,8 @@ export function loadConfig(cwd: string, explicitPath?: string): { config: OdwCon
   }
   let raw: unknown;
   try {
-    raw = JSON.parse(readFileSync(file, "utf8"));
+    // Windows editors and PowerShell 5.1 often save UTF-8 with a BOM, which JSON.parse rejects.
+    raw = JSON.parse(readFileSync(file, "utf8").replace(/^\uFEFF/, ""));
   } catch (e) {
     throw new Error(`${file}: invalid JSON (${e instanceof Error ? e.message : String(e)})`);
   }
