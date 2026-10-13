@@ -47,8 +47,20 @@ many subagents), without that limit:
 ## Install
 
 ```bash
-npm install -g github:almo-intellect/open-dynamic-workflows   # provides `odw`
+# prebuilt release tarball — provides `odw`
+npm install -g https://github.com/almo-intellect/open-dynamic-workflows/releases/download/v0.1.0/open-dynamic-workflows-0.1.0.tgz
 ```
+
+From source (builds `dist/` on `npm install`, and `npm install -g .` links the global `odw` to the
+clone):
+
+```bash
+git clone https://github.com/almo-intellect/open-dynamic-workflows.git
+cd open-dynamic-workflows && npm install && npm install -g .
+```
+
+Installing straight from the git URL (`npm install -g github:…`) fails on npm 11: the package's
+TypeScript build runs without its dev dependencies and cannot find `tsc`. Use one of the above.
 
 Requires Node ≥ 20 and the agent CLIs your scripts use (`gemini`, `claude`, `codex`) on `PATH`.
 
