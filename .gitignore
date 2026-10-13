@@ -1,0 +1,22 @@
+node_modules/
+dist/
+*.log
+.env
+.env.local
+.DS_Store
+
+# tsc / vite build artifacts
+**/*.tsbuildinfo
+
+# Playwright MCP debugging by-products
+.playwright-mcp/
+
+.idea
+
+# Local agent configuration / personal skills — not part of the package
+.claude/
+.agents/
+
+# Per-run data written by the runtime (script snapshot / journal / events / agent traces).
+# Each workflow is a self-contained folder: ignore only its runs/, keep .odw/<name>/script.js.
+.odw/*/runs/
