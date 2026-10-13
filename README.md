@@ -65,11 +65,20 @@ TypeScript build runs without its dev dependencies and cannot find `tsc`. Use on
 Requires Node ≥ 20 and the agent CLIs your scripts use (`gemini`, `claude`, `codex`) on `PATH`.
 
 Install the authoring skill (`skills/open-dynamic-workflows/SKILL.md`) into your coding agent so it
-can write workflow scripts, for example:
+can write workflow scripts:
 
 ```bash
+# Gemini CLI — every project on this machine (add --scope workspace for this project only)
+gemini skills install https://github.com/almo-intellect/open-dynamic-workflows --path skills/open-dynamic-workflows
+gemini skills list   # shows: open-dynamic-workflows [Enabled]
+
+# any agent that reads .agents/skills/ (Gemini CLI included)
 npx skills add almo-intellect/open-dynamic-workflows
 ```
+
+**Using Gemini CLI?** [docs/gemini-cli.md](./docs/gemini-cli.md) walks through the whole setup:
+installing the skill, `.odw/config.json`, a Gemini policy, an `/odw` slash command, creating a
+project skill of your own, your first workflow, and troubleshooting.
 
 ## Run
 
@@ -85,6 +94,8 @@ Each run lands in `.odw/<name>/runs/<runId>/`: the script snapshot, `journal.jso
 `events.jsonl`, one trace per agent (`agents/agent-N.jsonl`) and `summary.json`.
 
 ## Gemini quick start
+
+The short version — the full walkthrough is [docs/gemini-cli.md](./docs/gemini-cli.md).
 
 `.odw/config.json` (every key is optional):
 
