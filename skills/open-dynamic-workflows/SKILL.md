@@ -233,7 +233,8 @@ self-contained folder. If the CLI isn't installed yet, install it first (it prov
 `odw` command, aliased `open-dynamic-workflows`):
 
 ```bash
-npm install -g github:almo-intellect/open-dynamic-workflows   # provides the `odw` command
+# provides the `odw` command (prebuilt release tarball; installing from the git URL fails on npm 11)
+npm install -g https://github.com/almo-intellect/open-dynamic-workflows/releases/download/v0.1.0/open-dynamic-workflows-0.1.0.tgz
 ```
 
 Validate first, then run — by name (resolves `.odw/<name>/script.js`) or by an explicit path:
